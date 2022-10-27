@@ -5,7 +5,6 @@ import models.nn_parts as nn_parts
 
 # affine -> mrelu -> affine -> mrelu -> affine -> mrelu ->closs entropy
 
-
 class MReLU:
     def __init__(self, layers_dims, learning_rate):
         self.affine1 = nn_parts.Affine(

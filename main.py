@@ -25,7 +25,7 @@ parser.add_argument('--circle', action='store_true', help='dataset is circle')
 args = parser.parse_args()
 
 # 学習データの選択
-# 訓練データ数、テストデータ数、入力の画像を一列にしたときのサイズを定義しておく
+# 訓練データ数、テストデータ数、入力の画像を一列にしたときのサイズ、クラス数を定義しておく
 # 初期値はMNISTに合わせている
 train_data_num = 60000
 test_data_num = 10000
@@ -45,10 +45,12 @@ if args.mnist:
     train_labels_onehot = tf.keras.utils.to_categorical(
         train_labels, num_classes=10).reshape([train_data_num, 10, 1])
 elif args.circle:
-    train_data_num = 100000
-    test_data_num = 30000
+    train_data_num = 60000
+    test_data_num = 10000
     input_data_size = 2
     num_classes = 2
+
+    # circleのデータを準備する
     (train_examples, train_labels) = nn_parts.circle_load_data(train_data_num)
     (test_examples, test_labels) = nn_parts.circle_load_data(test_data_num)
 
@@ -66,6 +68,7 @@ if args.relu:
 elif args.mrelu:
     net = MRelu.MReLU(layers_dims, args.lr)
 
+# 損失関数の定義
 criterion = nn_parts.CrossEntropy()
 
 # 訓練を行う
@@ -74,6 +77,7 @@ for i in range(train_data_num):
     criterion(out, train_labels_onehot[i])
     net.backward(criterion.backward())
     print(f'\r{i}', end='')
+print("\n")
 
 # テストを行う
 point = 0
@@ -84,7 +88,10 @@ for i in range(test_data_num):
         point += 1
     print(f'\r{i}', end='')
     test_result.append(ans)
+print("\n")
 
+# circleデータのみ出力結果を図で確認
 if args.circle:
     nn_parts.print_data_2d(test_examples, test_result)
+# 正答率の出力
 print(point/test_data_num)

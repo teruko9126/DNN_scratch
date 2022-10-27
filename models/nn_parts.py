@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 # https://paperswithcode.com/method/he-initialization
 
 # circle : 円内のデータと円外のデータでラベルが異なるデータセット
-# ラベルが1: データが中に存在している : [1,0]
-# ラベルが1: データが外に存在している : [0,1]
+# ラベルが1 データが中に存在している
+# ラベルが0 データが外に存在している
 
 
 def circle_load_data(num_data):
@@ -45,8 +45,7 @@ def print_data_3d(data, label, sum):
 
     plt.show()
 
-# データの初期化を行う(heの初期値)
-# https://paperswithcode.com/method/he-initialization
+# 全結合層
 
 
 class Affine():
@@ -66,15 +65,18 @@ class Affine():
         self.bias -= chain_gradient * self.learning_rate
         return np.dot(self.weight.transpose(), chain_gradient)
 
+# relu関数
+
 
 class ReLU():
     def __call__(self, x):
         self.have_x = x
         return np.where(x >= 0, x, 0)
-      # parameters['relu_b1'] = np.zeros((layers_dims[1], 1))
 
     def backward(self, chain_gradient):
         return np.where(self.have_x >= 0, chain_gradient, 0)
+
+# mrelu関数
 
 
 class MReLU():
@@ -91,6 +93,8 @@ class MReLU():
             self.have_x <= 0, chain_gradient[np.size(self.have_x):], 0)
         return relu_part_grad + mrelu_part_grad
 
+# softmax関数
+
 
 class Softmax():
     def __call__(self, x):
@@ -103,8 +107,8 @@ class Softmax():
         return p * (1 - p) * chain_gradient
 
 
+# cross entropy loss
 class CrossEntropy():
-
     def __call__(self, out, label):
         self.have_label = label
         self.have_out = out
