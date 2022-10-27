@@ -71,27 +71,29 @@ elif args.mrelu:
 # 損失関数の定義
 criterion = nn_parts.CrossEntropy()
 
-# 訓練を行う
-for i in range(train_data_num):
-    out = net.forward(train_examples[i])
-    criterion(out, train_labels_onehot[i])
-    net.backward(criterion.backward())
-    print(f'\r{i}', end='')
-print("\n")
 
-# テストを行う
-point = 0
-test_result = []
-for i in range(test_data_num):
-    ans = np.argmax(net.forward(test_examples[i]))
-    if ans == test_labels[i]:
-        point += 1
-    print(f'\r{i}', end='')
-    test_result.append(ans)
-print("\n")
+for iter in range(args.iter):
+    # 訓練を行う
+    for i in range(train_data_num):
+        out = net.forward(train_examples[i])
+        criterion(out, train_labels_onehot[i])
+        net.backward(criterion.backward())
+        print(f'\r{i}', end='')
+    print("\n")
 
-# circleデータのみ出力結果を図で確認
-if args.circle:
-    nn_parts.print_data_2d(test_examples, test_result)
-# 正答率の出力
-print(point/test_data_num)
+    # テストを行う
+    point = 0
+    test_result = []
+    for i in range(test_data_num):
+        ans = np.argmax(net.forward(test_examples[i]))
+        if ans == test_labels[i]:
+            point += 1
+        print(f'\r{i}', end='')
+        test_result.append(ans)
+    print("\n")
+
+    # circleデータのみ出力結果を図で確認
+    if args.circle:
+        nn_parts.print_data_2d(test_examples, test_result)
+    # 正答率の出力
+    print(point/test_data_num)
